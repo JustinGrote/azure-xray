@@ -1,6 +1,24 @@
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+# Azure X-Ray
 
-## Getting Started
+![alt text](images/README/example.png)
+
+## Quick Start
+
+Availability in the various extension stores is pending.
+
+To use the development version:
+
+1. Download the zip package from the commit you are interested in.
+![](images/README/image.png)
+![](images/README/image-1.png)
+1. Extract the zip and then follow the sideloading instructions for your particular browser.
+<br />[Google Chrome](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked)
+<br />[Microsoft Edge](https://learn.microsoft.com/en-us/microsoft-edge/extensions-chromium/getting-started/extension-sideloading)
+<br />[Mozilla Firefox](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension#installing) - Not Tested
+
+## Development
+
+Built with [Plasmo](https://docs.plasmo.com/) and [Copilot Edits](https://code.visualstudio.com/docs/copilot/copilot-edits)
 
 First, run the development server:
 
@@ -12,22 +30,4 @@ npm run dev
 
 Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
 
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
-
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
-
-## Making production build
-
-Run the following:
-
-```bash
-pnpm build
-# or
-npm run build
-```
-
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
-
-## Submit to the webstores
-
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+For further guidance, [visit the Plasmo Documentation](https://docs.plasmo.com/)
