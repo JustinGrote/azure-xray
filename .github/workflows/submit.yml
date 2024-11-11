@@ -1,6 +1,6 @@
-name: "Submit to Web Store"
+name: "Build"
 on:
-  workflow_dispatch:
+  push:
 
 jobs:
   build:
