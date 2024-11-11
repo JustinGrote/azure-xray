@@ -1,3 +1,4 @@
 {
-	"npm.packageManager": "pnpm"
+	"npm.packageManager": "pnpm",
+	"git.postCommitCommand": "none"
 }
