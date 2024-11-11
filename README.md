@@ -12,8 +12,7 @@ Availability in the various extension stores is pending.
 
 To use the development version:
 
-1. Download the zip package from the commit you are interested in.
-![](images/README/image.png)
+1. Download the zip package from the [build you are interested in](https://github.com/JustinGrote/azure-xray/actions).
 ![](images/README/image-1.png)
 1. Extract the zip and then follow the sideloading instructions for your particular browser.
 <br />[Google Chrome](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked)
