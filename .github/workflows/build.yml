@@ -24,20 +24,27 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install
-      - name: Build Chromium
+      - name: Build Chrome
         run: pnpm build --zip --tag=dev
       - name: Build Firefox
         run: pnpm build --zip --tag=dev --target=firefox-mv2
-      - name: Upload Chromium Extension
+      - name: Build Edge
+        run: pnpm build --zip --tag=dev --target=edge-mv3
+      - name: Upload Chrome Extension
         uses: actions/upload-artifact@v4
         with:
-          name: chromium-extension
+          name: chrome-extension
           path: build/chrome-mv3-dev.zip
       - name: Upload Firefox Extension
         uses: actions/upload-artifact@v4
         with:
           name: firefox-extension
           path: build/firefox-mv2-dev.zip
+      - name: Upload Edge Extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: edge-extension
+          path: build/edge-mv3-dev.zip
 
         # - name: Browser Platform Publish
       #   uses: PlasmoHQ/bpp@v3
