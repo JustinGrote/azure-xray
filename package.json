@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "plasmo dev --target=edge-mv3",
     "build": "plasmo build --target=edge-mv3",
-    "package": "plasmo build --zip --target=edge-mv3"
+    "package": "plasmo build --zip"
   },
   "engines": {
     "pnpm": ">=9"
