@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client"
 import { useEffect, useState } from "react"
+import icon from "url:~/assets/icon.png"
 
 interface AzureApiRequest {
   httpMethod: string;
@@ -20,7 +21,7 @@ const AzureXrayPanel = () => {
 	const [reqs, setReq] = useState<AzureApiRequest[]>([])
 	useEffect(() => {
 		// Apply dark theme immediately when component mounts
-		document.body.style.backgroundColor = '#202124';
+		document.body.style.backgroundColor = '#282828';
 		document.body.style.color = '#e8eaed';
 		document.body.style.margin = '0';  // Remove default margin
 
@@ -35,6 +36,7 @@ const AzureXrayPanel = () => {
 			const requests = reqData.requests
 			requests.forEach((requestItem) => {
 				requestItem.url = requestItem.url.replace(/^https:\/\/management\.azure\.com/, "");
+				requestItem.requestHeaderDetails.commandName = requestItem.requestHeaderDetails.commandName.replace(/\.$/, '');
 				console.log("Azure X-Ray request detected", requestItem.httpMethod, requestItem.requestHeaderDetails.commandName, requestItem.url)
 				setReq(reqs => {
 					const newReqs = [...reqs, requestItem];
@@ -52,21 +54,23 @@ const AzureXrayPanel = () => {
 
 	return (
 			<div style={{
-				backgroundColor: '#202124',
+				backgroundColor: '#282828',
 				minHeight: '100vh',
-				padding: '16px'
+				fontSize: '12px'
 			}}>
 			<div>
-				<h2>Azure X-Ray</h2>
+				<div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '16px' }}>
+					<img src={icon} alt="Azure X-Ray" style={{ width: '16px', height: '16px' }} />
+					<h1 style={{ fontSize: '14px', margin: 0 }}>Azure X-Ray</h1>
+				</div>
 				{reqs && reqs.length > 0 && (
-					<div>
-						<h3>Request Details</h3>
-						<table style={{ width: '100%', borderCollapse: 'collapse' }}>
+						<div style={{ width: '100%' }}>
+						<table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0 }}>
 							<thead>
 								<tr style={{ backgroundColor: '#3c4043', color: '#e8eaed' }}>
-									<th style={{ padding: '8px', textAlign: 'left' }}>Method</th>
-									<th style={{ padding: '8px', textAlign: 'left' }}>Command</th>
-									<th style={{ padding: '8px', textAlign: 'left' }}>URL</th>
+									<th style={{ padding: '4px 8px', textAlign: 'left', fontSize: '12px', whiteSpace: 'nowrap', borderRight: '1px solid #5E5E5E' }}>Method</th>
+									<th style={{ padding: '4px 8px', textAlign: 'left', fontSize: '12px', whiteSpace: 'nowrap', borderRight: '1px solid #5E5E5E' }}>Command</th>
+									<th style={{ padding: '4px 8px', textAlign: 'left', fontSize: '12px', whiteSpace: 'nowrap' }}>URL</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -74,14 +78,13 @@ const AzureXrayPanel = () => {
 									<tr
 										key={index}
 										style={{
-											backgroundColor: index % 2 === 0 ? '#292a2d' : '#202124',
-											color: '#e8eaed',
-											borderBottom: '1px solid #3c4043'
+											backgroundColor: index % 2 === 0 ? '#28292A' : '#1F1F1F',
+											color: '#e8eaed'
 										}}
 									>
-										<td style={{ color: '#e8eaed', padding: '8px' }}>{req.httpMethod}</td>
-										<td style={{ color: '#e8eaed', padding: '8px' }}>{req.requestHeaderDetails.commandName}</td>
-										<td style={{ color: '#e8eaed', padding: '8px' }}>{req.url}</td>
+										<td style={{ color: '#e8eaed', padding: '4px 8px', whiteSpace: 'nowrap', borderRight: '1px solid #5E5E5E' }}>{req.httpMethod}</td>
+										<td style={{ color: '#e8eaed', padding: '4px 8px', whiteSpace: 'nowrap', borderRight: '1px solid #5E5E5E' }}>{req.requestHeaderDetails.commandName}</td>
+										<td style={{ color: '#e8eaed', padding: '4px 8px', whiteSpace: 'nowrap' }}>{req.url}</td>
 									</tr>
 								))}
 							</tbody>
