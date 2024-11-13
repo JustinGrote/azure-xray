@@ -55,6 +55,9 @@ jobs:
           name: edge-extension
           path: build/edge-mv3-dev
 
+      - name: Show Build Contents
+        run: ls -la build
+
         # - name: Browser Platform Publish
       #   uses: PlasmoHQ/bpp@v3
       #   with:
