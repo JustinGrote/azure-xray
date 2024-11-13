@@ -25,9 +25,9 @@ jobs:
         run: pnpm install
 
       - name: Build Chrome
-        run: pnpm build
+        run: pnpm build --verbose
         env:
-          PLASMO_BROWSER: chrome
+          PLASMO_TARGET: chrome-mv3
       - name: Upload Chrome Extension
         uses: actions/upload-artifact@v4
         with:
@@ -35,9 +35,9 @@ jobs:
           path: build/chrome-mv3-dev
 
       - name: Build Firefox
-        run: pnpm build
+        run: pnpm build --verbose
         env:
-          PLASMO_BROWSER: firefox
+          PLASMO_TARGET: firefox-mv2
       - name: Upload Firefox Extension
         uses: actions/upload-artifact@v4
         with:
@@ -45,9 +45,9 @@ jobs:
           path: build/firefox-mv2-dev
 
       - name: Build Edge
-        run: pnpm build
+        run: pnpm build --verbose
         env:
-          PLASMO_BROWSER: edge
+          PLASMO_TARGET: edge-mv3
 
       - name: Upload Edge Extension
         uses: actions/upload-artifact@v4
