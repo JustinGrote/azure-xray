@@ -27,7 +27,9 @@ jobs:
         run: pnpm install
 
       - name: Build Chrome
-        run: pnpm build --build-path=build/azure-xray
+        run: |
+          pnpm build
+          mv build/chrome-mv3-prod build/azure-xray
       - name: Capture Extension Artifact
         uses: actions/upload-artifact@v4
         with:
