@@ -5,6 +5,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: development
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -25,35 +27,12 @@ jobs:
         run: pnpm install
 
       - name: Build Chrome
-        run: pnpm build --verbose
-        env:
-          PLASMO_TARGET: chrome-mv3
-      - name: Upload Chrome Extension
+        run: pnpm build --build-path=build/azure-xray
+      - name: Capture Extension Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: chrome-extension
-          path: build/chrome-mv3-dev
-
-      - name: Build Firefox
-        run: pnpm build --verbose
-        env:
-          PLASMO_TARGET: firefox-mv2
-      - name: Upload Firefox Extension
-        uses: actions/upload-artifact@v4
-        with:
-          name: firefox-extension
-          path: build/firefox-mv2-dev
-
-      - name: Build Edge
-        run: pnpm build --verbose
-        env:
-          PLASMO_TARGET: edge-mv3
-
-      - name: Upload Edge Extension
-        uses: actions/upload-artifact@v4
-        with:
-          name: edge-extension
-          path: build/edge-mv3-dev
+          name: azure-xray-extension
+          path: build/azure-xray
 
         # - name: Browser Platform Publish
       #   uses: PlasmoHQ/bpp@v3
