@@ -4,5 +4,6 @@
  * @param path
  */
 export function fixChromePath (path: string) {
-	return path.startsWith("chrome-extension:") ? path.split("/").pop() : path
+	console.log(path)
+	return path?.startsWith("chrome-extension:") ? path.split("/").pop() : path
 }
