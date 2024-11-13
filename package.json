@@ -5,9 +5,10 @@
   "description": "View the Azure ARM API log of actions taken within the Azure Portal",
   "author": "Justin Grote <github.com/JustinGrote>",
   "scripts": {
-    "dev": "plasmo dev --target=edge-mv3",
-    "build": "plasmo build --target=edge-mv3",
-    "package": "plasmo build --zip"
+    "dev": "plasmo dev",
+    "dev-edge": "plasmo dev --target=edge-mv3",
+    "build": "plasmo build",
+    "package": "plasmo package"
   },
   "engines": {
     "pnpm": ">=9"
