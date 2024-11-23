@@ -1,4 +1,5 @@
 ;
+
 // import pwshLogo from "url:~/images/pwsh_logo.svg"
 
 // Added directly to index.html as workaround. DONT FORGET TO UPDATE THIS IF UPGRADING VERSIONS!
@@ -8,27 +9,18 @@
 // BUG: Plasmo doesn't load this correctly in panels
 // import "@mantine/core/styles.css"
 
-import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { CodeHighlight } from "@mantine/code-highlight";
-import { createTheme, MantineProvider, type MantineTheme } from "@mantine/core"
-import clsx from "clsx"
+import { CodeHighlight } from "@mantine/code-highlight"
+import { MantineProvider } from "@mantine/core"
 import { useEffect, useMemo, useState } from "react"
 import { createRoot } from "react-dom/client"
 import icon from "url:~/assets/icon.png"
-
-import {
-  IconBuilding,
-  IconChevronCompactRight,
-  IconChevronRight
-} from "~node_modules/@tabler/icons-react/dist/esm/tabler-icons-react"
 import {
   DataTable,
   type DataTableColumn
-} from "~node_modules/mantine-datatable/dist"
+} from "mantine-datatable/dist"
 import { generatePowerShellScript } from "~src/lib/scriptGenerator"
 import type { AzureApiRequest, AzureApiRequests } from "~src/lib/types"
 
-import classes from "./azure-xray.css"
 
 const AzureXrayPanel = () => {
   // Latest edge only supports default and dark
@@ -98,11 +90,6 @@ const AzureXrayPanel = () => {
       title: "Id",
       render: (apiRequest) => (
         <>
-          <IconChevronRight
-            className={clsx(classes.icon, classes.expandIcon, {
-              [classes.expandIconRotated]: records.includes(apiRequest)
-            })}
-          />
           <span>{records.indexOf(apiRequest) + 1}</span>
         </>
       ),
