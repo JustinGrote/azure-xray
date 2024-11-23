@@ -3,16 +3,23 @@
 // Added directly to index.html as workaround. DONT FORGET TO UPDATE THIS IF UPGRADING VERSIONS!
 // import "highlight.js/styles/github.css";
 
+// Core theming for mantine
+// BUG: Plasmo doesn't load this correctly in panels
+// import "@mantine/core/styles.css"
+
+import { useAutoAnimate } from "@formkit/auto-animate/react"
+import { CodeHighlight } from "@mantine/code-highlight"
 import { createTheme, MantineProvider, type MantineTheme } from "@mantine/core"
 import { useEffect, useMemo, useState } from "react"
 import { createRoot } from "react-dom/client"
 import icon from "url:~/assets/icon.png"
 
-import { DataTable } from "~node_modules/mantine-datatable/dist"
+import {
+  DataTable,
+  type DataTableColumn
+} from "~node_modules/mantine-datatable/dist"
+import { generatePowerShellScript } from "~src/lib/scriptGenerator"
 import type { AzureApiRequest, AzureApiRequests } from "~src/lib/types"
-
-// Core theming for mantine
-import "@mantine/core/styles.css"
 
 const AzureXrayPanel = () => {
   // Latest edge only supports default and dark
@@ -28,7 +35,7 @@ const AzureXrayPanel = () => {
   // document.body.style.color = theme.palette.text.primary
   document.body.style.margin = "0" // Remove default margin
 
-  const [data, setData] = useState<AzureApiRequest[]>([])
+  const [records, setRecords] = useState<AzureApiRequest[]>([])
 
   useEffect(() => {
     const handleRequestFinished = (
@@ -63,7 +70,7 @@ const AzureXrayPanel = () => {
           requestItem.requestHeaderDetails.commandName,
           requestItem.url
         )
-        setData((currentData) => [...currentData, requestItem])
+        setRecords((currentData) => [...currentData, requestItem])
       })
     }
 
@@ -76,20 +83,73 @@ const AzureXrayPanel = () => {
     }
   }, [])
 
-  const columns = [
+  const columns: DataTableColumn<AzureApiRequest>[] = [
     {
-      accessor: "method",
-      title: "Method"
+      accessor: "id",
+      title: "Id",
+      render: (record) => <div>{records.indexOf(record) + 1}</div>,
+      width: "4ch"
     },
     {
-      accessor: "requestHeaderDetails.commandName",
-      title: "Name"
+      accessor: "httpMethod",
+      title: "Method",
+      width: "9ch"
+    },
+    {
+      accessor: "requestHeaderDetails",
+      title: "Name",
+      render: ({ requestHeaderDetails }) => (
+        <div
+          style={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: "70ch"
+          }}>
+          {requestHeaderDetails.commandName}
+        </div>
+      )
     },
     {
       accessor: "url",
-      title: "Url"
+      title: "Url",
+      render: ({ url }) => (
+        <div
+          style={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis"
+          }}>
+          {url}
+        </div>
+      )
     }
   ]
+
+  const table = DataTable({
+    columns,
+    records,
+    withColumnBorders: true,
+    verticalAlign: "top",
+    bodyRef: useAutoAnimate<HTMLTableSectionElement>()[0],
+    styles: {
+      header: {
+        backgroundColor: "#333333"
+      }
+    },
+    height: "90%",
+    borderColor: "#5E5E5E",
+    rowBorderColor: "#5E5E5E",
+    idAccessor: (record) => records.indexOf(record) + 1,
+    rowExpansion: {
+      content: (currentRow) => (
+        <CodeHighlight
+          code={generatePowerShellScript(currentRow.record)}
+          language="powershell"
+        />
+      )
+    }
+  })
 
   return (
     <MantineProvider defaultColorScheme={mantineThemeColorSchemeName}>
@@ -109,9 +169,7 @@ const AzureXrayPanel = () => {
           />
           <h1 style={{ fontSize: "14px", margin: 0 }}>Azure X-Ray</h1>
         </div>
-        <div id="xrayRequestsTable">
-          <DataTable withTableBorder records={data} columns={columns} />
-        </div>
+        <div id="xrayRequestsTable">{table}</div>
       </div>
     </MantineProvider>
   )
