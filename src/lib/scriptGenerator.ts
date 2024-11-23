@@ -1,4 +1,4 @@
-import type { AzureApiRequest } from "../types.ts";
+import type { AzureApiRequest } from "./types.js";
 
 interface ParsedAzureUrl {
     subscriptionId?: string;
@@ -8,6 +8,11 @@ interface ParsedAzureUrl {
     name?: string[];
     apiVersion?: string;
     otherParams?: Record<string, string>;
+}
+
+interface FormattedSegment {
+    text: string;
+    scope?: string;
 }
 
 const indent = '    '; // 4 spaces

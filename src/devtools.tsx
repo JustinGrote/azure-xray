@@ -1,11 +1,12 @@
 import azureXrayPanel from "url:./panels/azure-xray/index.html"
 import logo from "url:~/assets/icon.png"
-import { fixChromePath } from "./util";
+
+import { fixChromePath } from "./lib/util"
 
 chrome.devtools.panels.create(
   "Azure XRay",
   fixChromePath(logo),
-  fixChromePath(azureXrayPanel),
+  fixChromePath(azureXrayPanel)
 )
 
 export default () => (

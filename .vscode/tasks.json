@@ -9,25 +9,7 @@
 			"group": {
 				"kind": "build",
 				"isDefault": true
-			},
-			"problemMatcher": {
-        "owner": "plasmo dev-edge",
-				"source": "plasmo dev-edge",
-        "fileLocation": ["relative", "${workspaceFolder}"],
-				"pattern": [
-          {
-            "regexp": "^🔴 ERROR\\s+\\|\\s+(.*)$",
-            "message": 1,
-						"file": 0,
-						"kind": "file"
-          }
-        ],
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "^🟣 (.+)$",
-          "endsPattern": "^🟢 (.+)$"
-        }
-      }
+			}
 		}
 	]
 }
