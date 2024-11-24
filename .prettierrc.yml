@@ -3,5 +3,5 @@
 # This config only overrides prettier defaults.
 semi: false
 plugins:
-  - prettier-plugin-organize-imports
+  - '@ianvs/prettier-plugin-sort-imports'
 arrowParens: avoid

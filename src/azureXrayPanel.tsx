@@ -1,12 +1,15 @@
-import { CodeHighlight } from "@mantine/code-highlight"
+import { CodeHighlightTabs } from "@mantine/code-highlight"
 import { MantineProvider } from "@mantine/core"
-import "@mantine/core/styles.css"
-import "highlight.js/styles/github.css"
+import icon from "/assets/icon.png"
+import kustoIcon from "/assets/kusto.svg"
+import pwshIcon from "/assets/pwsh_logo.svg"
 import { DataTable, DataTableColumn } from "mantine-datatable"
 import { useEffect, useMemo, useState } from "react"
 import { generatePowerShellScript } from "./lib/scriptGenerator"
 import { AzureApiRequest, AzureApiRequests } from "./lib/types"
-import icon from "/assets/icon.png"
+import "@mantine/core/styles.css"
+import "@mantine/code-highlight/styles.css"
+import "highlight.js/styles/github.css"
 
 const AzureXrayPanel = () => {
   // Latest edge only supports default and dark. As of Nov 2024 we can't detect theme changes so this is memoized.
@@ -120,31 +123,72 @@ const AzureXrayPanel = () => {
     },
   ]
 
-  const table = DataTable({
-    columns,
-    records,
-    withColumnBorders: true,
-    verticalAlign: "top",
-    // bodyRef: useAutoAnimate<HTMLTableSectionElement>()[0],
-    styles: {
-      header: {
-        backgroundColor: "#333333",
-      },
-    },
-    height: "90%",
-    borderColor: "#5E5E5E",
-    rowBorderColor: "#5E5E5E",
-    idAccessor: apiRequest => records.indexOf(apiRequest) + 1,
-    rowExpansion: {
-      allowMultiple: true,
-      content: ({ record: apiRequest }) => (
-        <CodeHighlight
-          code={generatePowerShellScript(apiRequest)}
-          language="powershell"
-        />
-      ),
-    },
-  })
+  const table = (
+    <DataTable
+      columns={columns}
+      records={records}
+      withColumnBorders={true}
+      verticalAlign="top"
+      styles={{
+        header: {
+          backgroundColor: "#333333",
+        },
+      }}
+      height="90%"
+      borderColor="#5E5E5E"
+      rowBorderColor="#5E5E5E"
+      idAccessor={apiRequest => records.indexOf(apiRequest) + 1}
+      rowExpansion={{
+        allowMultiple: true,
+        content: ({ record: apiRequest }) => (
+          <CodeHighlightTabs
+            code={[
+              {
+                code: generatePowerShellScript(apiRequest),
+                fileName: "PowerShell",
+                language: "powershell",
+                icon: (
+                  <img
+                    src={pwshIcon}
+                    alt="Kusto (KQL)"
+                    style={{
+                      cursor: "pointer",
+                      height: "calc(1rem * var(--mantine-scale)",
+                      width: "auto",
+                    }}
+                  />
+                ),
+              },
+              {
+                code: generatePowerShellScript(apiRequest, true),
+                fileName: "Kusto (KQL)",
+                language: "text",
+                icon: (
+                  <img
+                    src={kustoIcon}
+                    alt="Kusto (KQL)"
+                    style={{
+                      cursor: "pointer",
+                      height: "calc(1rem * var(--mantine-scale)",
+                      width: "auto",
+                    }}
+                    onClick={() => {
+                      window.open(
+                        `https://portal.azure.com/#blade/HubsExtension/ArgQueryBlade/query/${encodeURIComponent(
+                          generatePowerShellScript(apiRequest, true),
+                        )}`,
+                        "_blank",
+                      )
+                    }}
+                  />
+                ),
+              },
+            ]}
+          />
+        ),
+      }}
+    />
+  )
 
   return (
     <MantineProvider defaultColorScheme={mantineThemeColorSchemeName}>

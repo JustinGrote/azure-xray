@@ -2,15 +2,46 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "npm",
-			"script": "dev",
-			"problemMatcher": [],
-			"label": "npm: dev",
-			"detail": "vite",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
-		}
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "owner": "typescript",
+          "source": "vite-dev",
+          "applyTo": "allDocuments",
+          "fileLocation": ["relative", "${workspaceFolder}"],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": {
+              "regexp": "starting dev server"
+            },
+            "endsPattern": {
+              "regexp": "ready in"
+            }
+          },
+          "pattern": [
+            {
+              "regexp": "^(.*?):\\s*(\\d+):(\\d+):\\s*(error|warning|info):\\s*(.*)$",
+              "file": 1,
+              "line": 2,
+              "column": 3,
+              "severity": 4,
+              "message": 5
+            }
+          ]
+        }
+      ],
+      "label": "Vite Dev",
+      "icon": {
+        "id": "debug-alt",
+        "color": "terminal.ansiGreen"
+      },
+      "detail": "vite",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
 	]
 }
