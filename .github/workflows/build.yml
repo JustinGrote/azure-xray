@@ -25,16 +25,14 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install
-
       - name: Build Chrome
         run: |
           pnpm build
-          mv build/chrome-mv3-prod build/azure-xray
       - name: Capture Extension Artifact
         uses: actions/upload-artifact@v4
         with:
           name: azure-xray-extension
-          path: build/azure-xray
+          path: dist
 
       # - name: Browser Platform Publish
       #   uses: PlasmoHQ/bpp@v3

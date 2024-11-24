@@ -1,4 +1,4 @@
-import type { AzureApiRequest } from "../types.ts";
+import type { AzureApiRequest } from "./types.js";
 
 interface ParsedAzureUrl {
     subscriptionId?: string;
