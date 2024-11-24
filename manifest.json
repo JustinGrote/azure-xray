@@ -4,7 +4,7 @@
   "name": "Azure X-Ray",
   "description": "Azure X-Ray captures the underlying requests made to the Azure Management API and allows you to view them in scriptable formats.",
   "version": "0.0.1",
-  "action": { "default_popup": "index.html" },
+  "action": { "default_popup": "popup.html" },
   "devtools_page": "devtools.html",
   "icons": {
     "128": "assets/icon.png"

@@ -1,39 +1,27 @@
-// import pwshLogo from "url:~/images/pwsh_logo.svg"
-
-// Added directly to index.html as workaround. DONT FORGET TO UPDATE THIS IF UPGRADING VERSIONS!
-// import "highlight.js/styles/github.css";
-
-// Core theming for mantine
-// BUG: Plasmo doesn't load this correctly in panels
-// import "@mantine/core/styles.css"
-
 import { CodeHighlight } from "@mantine/code-highlight"
 import { MantineProvider } from "@mantine/core"
-import { DataTable, type DataTableColumn } from "mantine-datatable"
+import "@mantine/core/styles.css"
+import "highlight.js/styles/github.css"
+import { DataTable, DataTableColumn } from "mantine-datatable"
 import { useEffect, useMemo, useState } from "react"
+import { generatePowerShellScript } from "./lib/scriptGenerator"
+import { AzureApiRequest, AzureApiRequests } from "./lib/types"
 import icon from "/assets/icon.png"
-import { generatePowerShellScript } from "../../lib/scriptGenerator"
-import type { AzureApiRequest, AzureApiRequests } from "../../lib/types"
 
 const AzureXrayPanel = () => {
-  // Latest edge only supports default and dark
+  // Latest edge only supports default and dark. As of Nov 2024 we can't detect theme changes so this is memoized.
   const mantineThemeColorSchemeName = useMemo(
     () => (chrome.devtools.panels.themeName === "default" ? "light" : "dark"),
-    []
+    [],
   )
   console.log("Devtools Theme Name is", chrome.devtools.panels.themeName)
   console.log("Panel Mantine Theme selected:", mantineThemeColorSchemeName)
-
-  // // Apply dark theme immediately when component mounts
-  // document.body.style.backgroundColor = theme.palette.background.default
-  // document.body.style.color = theme.palette.text.primary
-  // document.body.style.margin = "0" // Remove default margin
 
   const [records, setRecords] = useState<AzureApiRequest[]>([])
 
   useEffect(() => {
     const handleRequestFinished = (
-      traceEntry: chrome.devtools.network.Request
+      traceEntry: chrome.devtools.network.Request,
     ) => {
       const url = traceEntry?.request?.url
       if (!url.startsWith("https://management.azure.com/batch")) {
@@ -43,16 +31,16 @@ const AzureXrayPanel = () => {
       if (!postData) {
         console.warn(
           "Azure X-Ray request detected but no requests found. Probably a bug",
-          url
+          url,
         )
         return
       }
       const reqData: AzureApiRequests = JSON.parse(postData)
       const requests = reqData.requests
-      requests.forEach((requestItem) => {
+      requests.forEach(requestItem => {
         requestItem.url = requestItem.url.replace(
           /^https:\/\/management\.azure\.com/,
-          ""
+          "",
         )
         requestItem.requestHeaderDetails.commandName =
           requestItem.requestHeaderDetails.commandName.replace(/\.$/, "")
@@ -60,9 +48,9 @@ const AzureXrayPanel = () => {
           "Azure X-Ray request detected: %s %s %s",
           requestItem.httpMethod,
           requestItem.requestHeaderDetails.commandName,
-          requestItem.url
+          requestItem.url,
         )
-        setRecords((currentData) => [...currentData, requestItem])
+        setRecords(currentData => [...currentData, requestItem])
       })
     }
 
@@ -70,7 +58,7 @@ const AzureXrayPanel = () => {
 
     return () => {
       chrome.devtools.network.onRequestFinished.removeListener(
-        handleRequestFinished
+        handleRequestFinished,
       )
     }
   }, [])
@@ -79,18 +67,18 @@ const AzureXrayPanel = () => {
     {
       accessor: "id",
       title: "Id",
-      render: (apiRequest) => (
+      render: apiRequest => (
         <>
           <span>{records.indexOf(apiRequest) + 1}</span>
         </>
       ),
       width: "6ch",
-      noWrap: true
+      noWrap: true,
     },
     {
       accessor: "httpMethod",
       title: "Method",
-      width: "9ch"
+      width: "9ch",
     },
     {
       accessor: "requestHeaderDetails",
@@ -101,11 +89,12 @@ const AzureXrayPanel = () => {
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            maxWidth: "70ch"
-          }}>
+            maxWidth: "70ch",
+          }}
+        >
           {requestHeaderDetails.commandName}
         </div>
-      )
+      ),
     },
     {
       accessor: "url",
@@ -115,12 +104,13 @@ const AzureXrayPanel = () => {
           style={{
             whiteSpace: "nowrap",
             overflow: "hidden",
-            textOverflow: "ellipsis"
-          }}>
+            textOverflow: "ellipsis",
+          }}
+        >
           {url}
         </div>
-      )
-    }
+      ),
+    },
   ]
 
   const table = DataTable({
@@ -131,22 +121,22 @@ const AzureXrayPanel = () => {
     // bodyRef: useAutoAnimate<HTMLTableSectionElement>()[0],
     styles: {
       header: {
-        backgroundColor: "#333333"
-      }
+        backgroundColor: "#333333",
+      },
     },
     height: "90%",
     borderColor: "#5E5E5E",
     rowBorderColor: "#5E5E5E",
-    idAccessor: (apiRequest) => records.indexOf(apiRequest) + 1
-    // rowExpansion: {
-    //   allowMultiple: true,
-    //   content: ({ record: apiRequest }) => (
-    //     <CodeHighlight
-    //       code={generatePowerShellScript(apiRequest)}
-    //       language="powershell"
-    //     />
-    //   )
-    // }
+    idAccessor: apiRequest => records.indexOf(apiRequest) + 1,
+    rowExpansion: {
+      allowMultiple: true,
+      content: ({ record: apiRequest }) => (
+        <CodeHighlight
+          code={generatePowerShellScript(apiRequest)}
+          language="powershell"
+        />
+      ),
+    },
   })
 
   return (
@@ -158,8 +148,9 @@ const AzureXrayPanel = () => {
             display: "flex",
             alignItems: "center",
             gap: "8px",
-            margin: "16px"
-          }}>
+            margin: "16px",
+          }}
+        >
           <img
             src={icon}
             alt="Azure X-Ray"

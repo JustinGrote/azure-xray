@@ -16,6 +16,15 @@ export default defineConfig({
     hmr: {
       port: 3000
     }
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        // Devtools and popup are handled by crxjs. Panels need to be a separate input so their css styles get loaded correctly.
+        // TODO: Add a transform so this can live in /src/panels
+        azureXrayPanel: "panel-azureXRay.html"
+      }
+    }
   }
 })
 
