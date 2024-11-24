@@ -4,28 +4,33 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@mantine/hooks':
+    hash: ki5zifuoz236zizpfgy2s3vd6u
+    path: patches/@mantine__hooks.patch
+
 importers:
 
   .:
     dependencies:
       '@mantine/code-highlight':
         specifier: ^7.14.2
-        version: 7.14.2(@mantine/core@7.14.2(@mantine/hooks@7.14.2(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 7.14.2(@mantine/core@7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mantine/core':
         specifier: ^7.14.2
-        version: 7.14.2(@mantine/hooks@7.14.2(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mantine/dates':
         specifier: ^7.14.2
-        version: 7.14.2(@mantine/core@7.14.2(@mantine/hooks@7.14.2(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(react@18.3.1))(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 7.14.2(@mantine/core@7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mantine/hooks':
         specifier: ^7.14.2
-        version: 7.14.2(react@18.3.1)
+        version: 7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1)
       '@web/rollup-plugin-html':
         specifier: ^2.3.0
         version: 2.3.0
       mantine-datatable:
         specifier: ^7.12.4
-        version: 7.12.4(@mantine/core@7.14.2(@mantine/hooks@7.14.2(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(react@18.3.1))(clsx@2.1.1)(react@18.3.1)
+        version: 7.12.4(@mantine/core@7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(clsx@2.1.1)(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -1808,19 +1813,19 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@mantine/code-highlight@7.14.2(@mantine/core@7.14.2(@mantine/hooks@7.14.2(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@mantine/code-highlight@7.14.2(@mantine/core@7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@mantine/core': 7.14.2(@mantine/hooks@7.14.2(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@mantine/hooks': 7.14.2(react@18.3.1)
+      '@mantine/core': 7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@mantine/hooks': 7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1)
       clsx: 2.1.1
       highlight.js: 11.10.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@mantine/core@7.14.2(@mantine/hooks@7.14.2(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@mantine/core@7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@floating-ui/react': 0.26.28(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@mantine/hooks': 7.14.2(react@18.3.1)
+      '@mantine/hooks': 7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1)
       clsx: 2.1.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -1831,16 +1836,16 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@mantine/dates@7.14.2(@mantine/core@7.14.2(@mantine/hooks@7.14.2(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(react@18.3.1))(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@mantine/dates@7.14.2(@mantine/core@7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@mantine/core': 7.14.2(@mantine/hooks@7.14.2(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@mantine/hooks': 7.14.2(react@18.3.1)
+      '@mantine/core': 7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@mantine/hooks': 7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1)
       clsx: 2.1.1
       dayjs: 1.11.13
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@mantine/hooks@7.14.2(react@18.3.1)':
+  '@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1)':
     dependencies:
       react: 18.3.1
 
@@ -2620,10 +2625,10 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  mantine-datatable@7.12.4(@mantine/core@7.14.2(@mantine/hooks@7.14.2(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(react@18.3.1))(clsx@2.1.1)(react@18.3.1):
+  mantine-datatable@7.12.4(@mantine/core@7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(clsx@2.1.1)(react@18.3.1):
     dependencies:
-      '@mantine/core': 7.14.2(@mantine/hooks@7.14.2(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@mantine/hooks': 7.14.2(react@18.3.1)
+      '@mantine/core': 7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@mantine/hooks': 7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1)
       clsx: 2.1.1
       react: 18.3.1
 

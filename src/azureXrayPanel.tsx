@@ -10,12 +10,17 @@ import icon from "/assets/icon.png"
 
 const AzureXrayPanel = () => {
   // Latest edge only supports default and dark. As of Nov 2024 we can't detect theme changes so this is memoized.
-  const mantineThemeColorSchemeName = useMemo(
-    () => (chrome.devtools.panels.themeName === "default" ? "light" : "dark"),
-    [],
-  )
-  console.log("Devtools Theme Name is", chrome.devtools.panels.themeName)
-  console.log("Panel Mantine Theme selected:", mantineThemeColorSchemeName)
+  const mantineThemeColorSchemeName = useMemo(() => {
+    // TODO: Media support for side panel
+    if (!chrome?.devtools?.panels.themeName) {
+      console.warn("Devtools theme name is not available.")
+      return "light"
+    }
+    const mThemeName =
+      chrome.devtools?.panels?.themeName === "default" ? "light" : "dark"
+    console.log("Panel Mantine Theme selected:", mThemeName)
+    return mThemeName
+  }, [])
 
   const [records, setRecords] = useState<AzureApiRequest[]>([])
 
@@ -62,6 +67,8 @@ const AzureXrayPanel = () => {
       )
     }
   }, [])
+
+  // HACK: Because we aren't allowed to use the clipboard API in the devtools panel even with writeClipboard permission.
 
   const columns: DataTableColumn<AzureApiRequest>[] = [
     {

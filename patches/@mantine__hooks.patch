@@ -1,0 +1,57 @@
+diff --git a/esm/use-clipboard/use-clipboard.mjs b/esm/use-clipboard/use-clipboard.mjs
+index 5e2cfd3d555271137eec5bdd1ad5289b3c2ad157..b99a60acf90bfab33649de10f70ed214fa57139c 100644
+--- a/esm/use-clipboard/use-clipboard.mjs
++++ b/esm/use-clipboard/use-clipboard.mjs
+@@ -11,10 +11,29 @@ function useClipboard({ timeout = 2e3 } = {}) {
+     setCopied(value);
+   };
+   const copy = (valueToCopy) => {
+-    if ("clipboard" in navigator) {
+-      navigator.clipboard.writeText(valueToCopy).then(() => handleCopyResult(true)).catch((err) => setError(err));
+-    } else {
+-      setError(new Error("useClipboard: navigator.clipboard is not supported"));
++    try {
++      if ("clipboard" in navigator) {
++        navigator.clipboard.writeText(valueToCopy).then(() => handleCopyResult(true)).catch((err) => {
++          if (err.name !== "NotAllowedError") {
++            setError(err);
++            handleCopyResult(false);
++            return;
++          }
++          // Try the legacy method
++          try {
++            clipboardWriteTextUsingDeprecatedCommandExec(valueToCopy);
++            console.debug("Copied to clipboard using legacy command exec method. Any clipboard permissions warnings above can be ignored.");
++            handleCopyResult(true);
++          } catch (execErr) {
++            setError(execErr)
++            handleCopyResult(false);
++          }
++        })
++      } else {
++        setError(new Error("useClipboard: navigator.clipboard is not supported"));
++      }
++    } catch (err) {
++      console.log(err);
+     }
+   };
+   const reset = () => {
+@@ -25,5 +44,18 @@ function useClipboard({ timeout = 2e3 } = {}) {
+   return { copy, reset, error, copied };
+ }
+ 
++// A glorious legacy hack because the standard API will probably never work in chrome devtools
++function clipboardWriteTextUsingDeprecatedCommandExec(text) {
++  const textArea = document.createElement("textarea");
++  textArea.value = text;
++  document.body.appendChild(textArea);
++  textArea.select();
++  const result = document.execCommand("copy");
++  document.body.removeChild(textArea);
++  if (!result) {
++    throw new Error("Failed to copy text to clipboard using legacy document.execCommand");
++  }
++}
++
+ export { useClipboard };
+ //# sourceMappingURL=use-clipboard.mjs.map
