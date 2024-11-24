@@ -1,4 +1,7 @@
-import { CodeHighlightTabs } from "@mantine/code-highlight"
+import {
+  CodeHighlightTabs,
+  CodeHighlightTabsCode,
+} from "@mantine/code-highlight"
 import { MantineProvider } from "@mantine/core"
 import icon from "/assets/icon.png"
 import kustoIcon from "/assets/kusto.svg"
@@ -7,9 +10,6 @@ import { DataTable, DataTableColumn } from "mantine-datatable"
 import { useEffect, useMemo, useState } from "react"
 import { generatePowerShellScript } from "./lib/scriptGenerator"
 import { AzureApiRequest, AzureApiRequests } from "./lib/types"
-import "@mantine/core/styles.css"
-import "@mantine/code-highlight/styles.css"
-import "highlight.js/styles/github.css"
 
 const AzureXrayPanel = () => {
   // Latest edge only supports default and dark. As of Nov 2024 we can't detect theme changes so this is memoized.
@@ -91,35 +91,10 @@ const AzureXrayPanel = () => {
       width: "9ch",
     },
     {
-      accessor: "requestHeaderDetails",
+      accessor: "requestHeaderDetails.commandName",
       title: "Name",
-      render: ({ requestHeaderDetails }) => (
-        <div
-          style={{
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            maxWidth: "70ch",
-          }}
-        >
-          {requestHeaderDetails.commandName}
-        </div>
-      ),
-    },
-    {
-      accessor: "url",
-      title: "Url",
-      render: ({ url }) => (
-        <div
-          style={{
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {url}
-        </div>
-      ),
+      ellipsis: true,
+      resizable: true,
     },
   ]
 
@@ -127,7 +102,10 @@ const AzureXrayPanel = () => {
     <DataTable
       columns={columns}
       records={records}
-      withColumnBorders={true}
+      withRowBorders={false}
+      withColumnBorders
+      striped
+      highlightOnHover
       verticalAlign="top"
       styles={{
         header: {
@@ -135,6 +113,7 @@ const AzureXrayPanel = () => {
         },
       }}
       height="90%"
+      width="100%"
       borderColor="#5E5E5E"
       rowBorderColor="#5E5E5E"
       idAccessor={apiRequest => records.indexOf(apiRequest) + 1}
@@ -142,48 +121,9 @@ const AzureXrayPanel = () => {
         allowMultiple: true,
         content: ({ record: apiRequest }) => (
           <CodeHighlightTabs
-            code={[
-              {
-                code: generatePowerShellScript(apiRequest),
-                fileName: "PowerShell",
-                language: "powershell",
-                icon: (
-                  <img
-                    src={pwshIcon}
-                    alt="Kusto (KQL)"
-                    style={{
-                      cursor: "pointer",
-                      height: "calc(1rem * var(--mantine-scale)",
-                      width: "auto",
-                    }}
-                  />
-                ),
-              },
-              {
-                code: generatePowerShellScript(apiRequest, true),
-                fileName: "Kusto (KQL)",
-                language: "text",
-                icon: (
-                  <img
-                    src={kustoIcon}
-                    alt="Kusto (KQL)"
-                    style={{
-                      cursor: "pointer",
-                      height: "calc(1rem * var(--mantine-scale)",
-                      width: "auto",
-                    }}
-                    onClick={() => {
-                      window.open(
-                        `https://portal.azure.com/#blade/HubsExtension/ArgQueryBlade/query/${encodeURIComponent(
-                          generatePowerShellScript(apiRequest, true),
-                        )}`,
-                        "_blank",
-                      )
-                    }}
-                  />
-                ),
-              },
-            ]}
+            code={getCodeHighlightDetails(apiRequest)}
+            withExpandButton
+            defaultExpanded={false}
           />
         ),
       }}
@@ -192,27 +132,77 @@ const AzureXrayPanel = () => {
 
   return (
     <MantineProvider defaultColorScheme={mantineThemeColorSchemeName}>
-      <div style={{ minHeight: "100vh" }}>
-        <div
-          id="header"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            margin: "16px",
-          }}
-        >
-          <img
-            src={icon}
-            alt="Azure X-Ray"
-            style={{ width: "16px", height: "16px" }}
-          />
-          <h1 style={{ fontSize: "14px", margin: 0 }}>Azure X-Ray</h1>
-        </div>
-        <div id="xrayRequestsTable">{table}</div>
+      <div
+        id="header"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          margin: "8px",
+        }}
+      >
+        <img
+          src={icon}
+          alt="Azure X-Ray"
+          style={{ width: "16px", height: "16px" }}
+        />
+        <h1 style={{ fontSize: "14px", margin: 0 }}>Azure X-Ray</h1>
       </div>
+      <div id="xrayRequestsTable">{table}</div>
     </MantineProvider>
   )
+}
+
+function getCodeHighlightDetails(
+  apiRequest: AzureApiRequest,
+): CodeHighlightTabsCode[] {
+  const codeTabs: CodeHighlightTabsCode[] = [
+    {
+      code: generatePowerShellScript(apiRequest),
+      fileName: "PowerShell",
+      language: "powershell",
+      icon: (
+        <img
+          src={pwshIcon}
+          alt="Kusto (KQL)"
+          style={{
+            cursor: "pointer",
+            height: "calc(1rem * var(--mantine-scale)",
+            width: "auto",
+          }}
+        />
+      ),
+    },
+  ]
+
+  const isResourceGraphQuery =
+    apiRequest.httpMethod === "POST" &&
+    apiRequest.url.startsWith("/providers/Microsoft.ResourceGraph")
+
+  if (isResourceGraphQuery) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const contentQuery = (apiRequest.content as any)?.query
+    if (typeof contentQuery === "string") {
+      codeTabs.unshift({
+        code: generatePowerShellScript(apiRequest, true),
+        fileName: "Kusto (KQL)",
+        language: "sql",
+        icon: (
+          <img
+            src={kustoIcon}
+            alt="Kusto (KQL)"
+            style={{
+              cursor: "pointer",
+              height: "calc(1rem * var(--mantine-scale)",
+              width: "auto",
+            }}
+          />
+        ),
+      })
+    }
+  }
+
+  return codeTabs
 }
 
 export default AzureXrayPanel
