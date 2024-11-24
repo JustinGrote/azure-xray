@@ -4,45 +4,39 @@
   "version": "0.0.1",
   "description": "View the Azure ARM API log of actions taken within the Azure Portal",
   "author": "Justin Grote <github.com/JustinGrote>",
+  "type": "module",
   "scripts": {
-    "dev": "plasmo dev",
-    "dev-edge": "plasmo dev --target=edge-mv3",
-    "build": "plasmo build",
-    "package": "plasmo package"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
-  "engines": {
-    "pnpm": ">=9"
-  },
-  "packageManager": "pnpm@9.12.3",
   "dependencies": {
-    "@emotion/react": "^11.13.5",
-    "@formkit/auto-animate": "^0.8.2",
     "@mantine/code-highlight": "^7.14.1",
     "@mantine/core": "7.14.1",
     "@mantine/dates": "7.14.1",
     "@mantine/hooks": "7.14.1",
-    "@tabler/icons-react": "^3.22.0",
-    "clsx": "^2.1.1",
+    "@web/rollup-plugin-html": "^2.3.0",
     "mantine-datatable": "^7.12.4",
-    "plasmo": "0.89.4",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "4.1.1",
-    "@types/chrome": "0.0.258",
-    "@types/node": "20.11.5",
-    "@types/react": "18.3.3",
-    "@types/react-dom": "18.3.0",
-    "postcss": "^8.4.38",
-    "postcss-preset-mantine": "1.17.0",
-    "postcss-simple-vars": "^7.0.1",
-    "prettier": "3.2.4",
-    "typescript": "5.5.2"
-  },
-  "manifest": {
-    "host_permissions": [
-      "https://*/*"
-    ]
+    "@crxjs/vite-plugin": "^2.0.0-beta.28",
+    "@eslint/js": "^9.13.0",
+    "@types/chrome": "^0.0.283",
+    "@types/node": "^22.9.3",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vite-pwa/assets-generator": "^0.2.6",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "eslint": "^9.13.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "globals": "^15.11.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.11.0",
+    "vite": "^5.4.11",
+    "vite-tsconfig-paths": "^5.1.3"
   }
 }

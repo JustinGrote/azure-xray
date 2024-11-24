@@ -3,9 +3,10 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "dev-edge",
-			"label": "npm: dev-edge",
-			"detail": "plasmo dev-edge",
+			"script": "dev",
+			"problemMatcher": [],
+			"label": "npm: dev",
+			"detail": "vite",
 			"group": {
 				"kind": "build",
 				"isDefault": true

@@ -10,11 +10,6 @@ interface ParsedAzureUrl {
     otherParams?: Record<string, string>;
 }
 
-interface FormattedSegment {
-    text: string;
-    scope?: string;
-}
-
 const indent = '    '; // 4 spaces
 
 function parseAzureUrl(url: string): ParsedAzureUrl {
