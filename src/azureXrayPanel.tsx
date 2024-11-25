@@ -1,13 +1,10 @@
-import {
-  CodeHighlightTabs,
-  CodeHighlightTabsCode,
-} from "@mantine/code-highlight"
-import { MantineProvider } from "@mantine/core"
+import { CodeHighlightTabs, CodeHighlightTabsCode } from "@mantine/code-highlight";
+import { Button, MantineProvider } from "@mantine/core"
 import icon from "/assets/icon.png"
 import kustoIcon from "/assets/kusto.svg"
 import pwshIcon from "/assets/pwsh_logo.svg"
 import { clsx } from "clsx"
-import { DataTable, DataTableColumn, reorderRecords } from "mantine-datatable"
+import { DataTable, DataTableColumn } from "mantine-datatable"
 import { useEffect, useMemo, useState } from "react"
 import { FaChevronRight } from "react-icons/fa6"
 import classes from "./datatable.module.css"
@@ -180,6 +177,10 @@ const AzureXrayPanel = () => {
           style={{ width: "16px", height: "16px" }}
         />
         <h1 style={{ fontSize: "14px", margin: 0 }}>Azure X-Ray</h1>
+        <div style={{ flexGrow: 1 }} />
+        <Button size="xs" variant="subtle" onClick={() => setRecords([])}>
+          Clear
+        </Button>
       </div>
       <div id="xrayRequestsTable">{table}</div>
     </MantineProvider>
