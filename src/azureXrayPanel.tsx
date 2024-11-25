@@ -82,13 +82,13 @@ const AzureXrayPanel = () => {
           <span>{records.indexOf(apiRequest) + 1}</span>
         </>
       ),
-      width: "6ch",
+      width: "5ch",
       noWrap: true,
     },
     {
       accessor: "httpMethod",
       title: "Method",
-      width: "9ch",
+      width: "10ch",
     },
     {
       accessor: "requestHeaderDetails.commandName",
