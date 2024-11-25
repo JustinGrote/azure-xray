@@ -5,6 +5,7 @@ import "@mantine/core/styles.layer.css"
 import "mantine-datatable/styles.layer.css"
 import "@mantine/code-highlight/styles.css"
 import "highlight.js/styles/github.css"
+import "./theme-overrides.css"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -6,9 +6,15 @@ import { MantineProvider } from "@mantine/core"
 import icon from "/assets/icon.png"
 import kustoIcon from "/assets/kusto.svg"
 import pwshIcon from "/assets/pwsh_logo.svg"
-import { DataTable, DataTableColumn } from "mantine-datatable"
+import { clsx } from "clsx"
+import { DataTable, DataTableColumn, reorderRecords } from "mantine-datatable"
 import { useEffect, useMemo, useState } from "react"
-import { generatePowerShellScript } from "./lib/scriptGenerator"
+import { FaChevronRight } from "react-icons/fa6"
+import classes from "./datatable.module.css"
+import {
+  generateArqPortalUrl,
+  generatePowerShellScript,
+} from "./lib/scriptGenerator"
 import { AzureApiRequest, AzureApiRequests } from "./lib/types"
 
 const AzureXrayPanel = () => {
@@ -26,6 +32,7 @@ const AzureXrayPanel = () => {
   }, [])
 
   const [records, setRecords] = useState<AzureApiRequest[]>([])
+  const [expandedRecordIds, setExpandedRecordIds] = useState<number[]>([])
 
   useEffect(() => {
     const handleRequestFinished = (
@@ -77,12 +84,28 @@ const AzureXrayPanel = () => {
     {
       accessor: "id",
       title: "Id",
-      render: apiRequest => (
-        <>
-          <span>{records.indexOf(apiRequest) + 1}</span>
-        </>
-      ),
-      width: "5ch",
+      render: apiRequest => {
+        const id = records.indexOf(apiRequest) + 1
+        return (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <FaChevronRight
+              className={clsx(classes.expandIcon, {
+                [classes.expandIconRotated]: expandedRecordIds.includes(id),
+              })}
+            />
+            <span>{id}</span>
+          </div>
+        )
+      },
+      width: "8ch",
+      textAlign: "right",
       noWrap: true,
     },
     {
@@ -108,6 +131,9 @@ const AzureXrayPanel = () => {
       highlightOnHover
       verticalAlign="top"
       styles={{
+        table: {
+          tableLayout: "fixed",
+        },
         header: {
           backgroundColor: "#333333",
         },
@@ -116,9 +142,16 @@ const AzureXrayPanel = () => {
       width="100%"
       borderColor="#5E5E5E"
       rowBorderColor="#5E5E5E"
+      scrollAreaProps={{
+        type: "hover",
+      }}
       idAccessor={apiRequest => records.indexOf(apiRequest) + 1}
       rowExpansion={{
         allowMultiple: true,
+        expanded: {
+          recordIds: expandedRecordIds,
+          onRecordIdsChange: setExpandedRecordIds,
+        },
         content: ({ record: apiRequest }) => (
           <CodeHighlightTabs
             code={getCodeHighlightDetails(apiRequest)}
@@ -166,9 +199,7 @@ function getCodeHighlightDetails(
           src={pwshIcon}
           alt="Kusto (KQL)"
           style={{
-            cursor: "pointer",
             height: "calc(1rem * var(--mantine-scale)",
-            width: "auto",
           }}
         />
       ),
@@ -188,15 +219,15 @@ function getCodeHighlightDetails(
         fileName: "Kusto (KQL)",
         language: "sql",
         icon: (
-          <img
-            src={kustoIcon}
-            alt="Kusto (KQL)"
-            style={{
-              cursor: "pointer",
-              height: "calc(1rem * var(--mantine-scale)",
-              width: "auto",
-            }}
-          />
+          <a href={generateArqPortalUrl(contentQuery)} target="_blank">
+            <img
+              src={kustoIcon}
+              alt="Kusto (KQL)"
+              style={{
+                height: "calc(1rem * var(--mantine-scale)",
+              }}
+            />
+          </a>
         ),
       })
     }

@@ -1,4 +1,5 @@
-import type { AzureApiRequest } from "./types.js"
+import type { AzureApiRequest } from "./types.js";
+
 
 interface ParsedAzureUrl {
   subscriptionId?: string
@@ -185,6 +186,7 @@ export function generatePowerShellScript(
   }
 }
 
+// Thanks https://techcommunity.microsoft.com/blog/itopstalkblog/how-to-share-azure-resource-graph-queries-as-a-link/1485418
 export function generateArqPortalUrl(query: string): string {
   const encodedQuery = encodeURIComponent(query)
   return `https://portal.azure.com/?feature.customportal=false#blade/HubsExtension/ArgQueryBlade/query/${encodedQuery}`
