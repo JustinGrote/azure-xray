@@ -19,7 +19,6 @@ import {
 } from "./lib/scriptGenerator"
 import { AzureApiBatchRequest, AzureCommand } from "./lib/types"
 
-
 const AzureXrayPanel = () => {
   // Latest edge only supports default and dark. As of Nov 2024 we can't detect theme changes so this is memoized.
   const mantineThemeColorSchemeName = useMemo(() => {
@@ -262,12 +261,16 @@ function getCodeHighlightDetails(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const contentQuery = (command.content as any)?.query
     if (typeof contentQuery === "string") {
+      const formattedQuery = formatKqlQuery(contentQuery)
       codeTabs.unshift({
-        code: formatKqlQuery(contentQuery),
+        code: formatKqlQuery(formattedQuery),
         fileName: "Kusto (KQL)",
         language: "sql",
         icon: (
-          <a href={generateArqPortalUrl(contentQuery)} target="_blank">
+          <a
+            href={generateArqPortalUrl(formatKqlQuery(formattedQuery))}
+            target="_blank"
+          >
             <img
               src={kustoIcon}
               alt="Kusto (KQL)"
