@@ -1,5 +1,5 @@
 import { CodeHighlightTabs, CodeHighlightTabsCode } from "@mantine/code-highlight";
-import { Button, Group, MantineProvider } from "@mantine/core"
+import { Button, MantineProvider } from "@mantine/core"
 import icon from "/assets/icon.png"
 import kustoIcon from "/assets/kusto.svg"
 import pwshIcon from "/assets/pwsh_logo.svg"
@@ -18,6 +18,7 @@ import {
   generatePowerShellScript,
 } from "./lib/scriptGenerator"
 import { AzureApiBatchRequest, AzureCommand } from "./lib/types"
+
 
 const AzureXrayPanel = () => {
   // Latest edge only supports default and dark. As of Nov 2024 we can't detect theme changes so this is memoized.
