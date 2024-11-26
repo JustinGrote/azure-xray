@@ -13,9 +13,6 @@ importers:
 
   .:
     dependencies:
-      '@ianvs/prettier-plugin-sort-imports':
-        specifier: ^4.4.0
-        version: 4.4.0(prettier@3.3.3)
       '@mantine/code-highlight':
         specifier: ^7.14.2
         version: 7.14.2(@mantine/core@7.14.2(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.14.2(patch_hash=ki5zifuoz236zizpfgy2s3vd6u)(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -31,9 +28,6 @@ importers:
       '@tabler/icons-react':
         specifier: ^3.22.0
         version: 3.22.0(react@18.3.1)
-      '@web/rollup-plugin-html':
-        specifier: ^2.3.0
-        version: 2.3.0
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -56,6 +50,9 @@ importers:
       '@eslint/js':
         specifier: ^9.15.0
         version: 9.15.0
+      '@ianvs/prettier-plugin-sort-imports':
+        specifier: ^4.4.0
+        version: 4.4.0(prettier@3.3.3)
       '@types/chrome':
         specifier: ^0.0.283
         version: 0.0.283
@@ -71,6 +68,9 @@ importers:
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.1
         version: 3.7.1(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.1)(terser@5.36.0))
+      '@web/rollup-plugin-html':
+        specifier: ^2.3.0
+        version: 2.3.0
       eslint:
         specifier: ^9.15.0
         version: 9.15.0(jiti@1.21.6)

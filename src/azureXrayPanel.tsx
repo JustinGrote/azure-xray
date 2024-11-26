@@ -1,18 +1,23 @@
 import { CodeHighlightTabs, CodeHighlightTabsCode } from "@mantine/code-highlight";
-import { Button, MantineProvider } from "@mantine/core"
+import { Button, Group, MantineProvider } from "@mantine/core"
 import icon from "/assets/icon.png"
 import kustoIcon from "/assets/kusto.svg"
 import pwshIcon from "/assets/pwsh_logo.svg"
 import { clsx } from "clsx"
-import { DataTable, DataTableColumn } from "mantine-datatable"
+import {
+  DataTable,
+  DataTableColumn,
+  useDataTableColumns,
+} from "mantine-datatable"
 import { useEffect, useMemo, useState } from "react"
 import { FaChevronRight } from "react-icons/fa6"
 import classes from "./datatable.module.css"
+import { formatKqlQuery, parseAzureApiRequest } from "./lib/requestParser"
 import {
   generateArqPortalUrl,
   generatePowerShellScript,
 } from "./lib/scriptGenerator"
-import { AzureApiRequest, AzureApiRequests } from "./lib/types"
+import { AzureApiBatchRequest, AzureCommand } from "./lib/types"
 
 const AzureXrayPanel = () => {
   // Latest edge only supports default and dark. As of Nov 2024 we can't detect theme changes so this is memoized.
@@ -28,7 +33,7 @@ const AzureXrayPanel = () => {
     return mThemeName
   }, [])
 
-  const [records, setRecords] = useState<AzureApiRequest[]>([])
+  const [records, setRecords] = useState<AzureCommand[]>([])
   const [expandedRecordIds, setExpandedRecordIds] = useState<number[]>([])
 
   useEffect(() => {
@@ -47,7 +52,7 @@ const AzureXrayPanel = () => {
         )
         return
       }
-      const reqData: AzureApiRequests = JSON.parse(postData)
+      const reqData: AzureApiBatchRequest = JSON.parse(postData)
       const requests = reqData.requests
       requests.forEach(requestItem => {
         requestItem.url = requestItem.url.replace(
@@ -62,7 +67,11 @@ const AzureXrayPanel = () => {
           requestItem.requestHeaderDetails.commandName,
           requestItem.url,
         )
-        setRecords(currentData => [...currentData, requestItem])
+
+        setRecords(currentData => [
+          ...currentData,
+          parseAzureApiRequest(requestItem),
+        ])
       })
     }
 
@@ -77,7 +86,7 @@ const AzureXrayPanel = () => {
 
   // HACK: Because we aren't allowed to use the clipboard API in the devtools panel even with writeClipboard permission.
 
-  const columns: DataTableColumn<AzureApiRequest>[] = [
+  const columns: DataTableColumn<AzureCommand>[] = [
     {
       accessor: "id",
       title: "Id",
@@ -101,7 +110,7 @@ const AzureXrayPanel = () => {
           </div>
         )
       },
-      width: "8ch",
+      width: "20ch",
       textAlign: "right",
       noWrap: true,
     },
@@ -109,18 +118,49 @@ const AzureXrayPanel = () => {
       accessor: "httpMethod",
       title: "Method",
       width: "10ch",
+      ellipsis: false,
     },
     {
       accessor: "requestHeaderDetails.commandName",
       title: "Name",
-      ellipsis: true,
-      resizable: true,
+    },
+    {
+      accessor: "resourceId.name",
+      title: "Resource Name",
+      render: apiRequest => apiRequest.resourceId.name,
+    },
+    {
+      accessor: "resourceId.resourceGroupName",
+      title: "Resource Group",
+    },
+    {
+      accessor: "resourceId.resourceType",
+      title: "Type",
+    },
+    {
+      accessor: "resourceId.subscriptionId",
+      title: "Subscription",
+    },
+    {
+      accessor: "resourceId.provider",
+      title: "Resource Provider",
     },
   ]
 
+  const { effectiveColumns, resetColumnsToggle } = useDataTableColumns({
+    key: "azure-xray",
+    columns,
+  })
+
   const table = (
     <DataTable
-      columns={columns}
+      defaultColumnProps={{
+        ellipsis: true,
+        resizable: true,
+        draggable: true,
+        toggleable: true,
+      }}
+      columns={effectiveColumns}
       records={records}
       withRowBorders={false}
       withColumnBorders
@@ -150,11 +190,14 @@ const AzureXrayPanel = () => {
           onRecordIdsChange: setExpandedRecordIds,
         },
         content: ({ record: apiRequest }) => (
-          <CodeHighlightTabs
-            code={getCodeHighlightDetails(apiRequest)}
-            withExpandButton
-            defaultExpanded={false}
-          />
+          <>
+            <div>{apiRequest.url}</div>
+            <CodeHighlightTabs
+              code={getCodeHighlightDetails(apiRequest)}
+              withExpandButton
+              defaultExpanded={false}
+            />
+          </>
         ),
       }}
     />
@@ -181,6 +224,9 @@ const AzureXrayPanel = () => {
         <Button size="xs" variant="subtle" onClick={() => setRecords([])}>
           Clear
         </Button>
+        <Button size="xs" variant="subtle" onClick={() => resetColumnsToggle()}>
+          Reset View
+        </Button>
       </div>
       <div id="xrayRequestsTable">{table}</div>
     </MantineProvider>
@@ -188,11 +234,11 @@ const AzureXrayPanel = () => {
 }
 
 function getCodeHighlightDetails(
-  apiRequest: AzureApiRequest,
+  command: AzureCommand,
 ): CodeHighlightTabsCode[] {
   const codeTabs: CodeHighlightTabsCode[] = [
     {
-      code: generatePowerShellScript(apiRequest),
+      code: generatePowerShellScript(command),
       fileName: "PowerShell",
       language: "powershell",
       icon: (
@@ -208,15 +254,15 @@ function getCodeHighlightDetails(
   ]
 
   const isResourceGraphQuery =
-    apiRequest.httpMethod === "POST" &&
-    apiRequest.url.startsWith("/providers/Microsoft.ResourceGraph")
+    command.httpMethod === "POST" &&
+    command.url.startsWith("/providers/Microsoft.ResourceGraph")
 
   if (isResourceGraphQuery) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const contentQuery = (apiRequest.content as any)?.query
+    const contentQuery = (command.content as any)?.query
     if (typeof contentQuery === "string") {
       codeTabs.unshift({
-        code: generatePowerShellScript(apiRequest, true),
+        code: formatKqlQuery(contentQuery),
         fileName: "Kusto (KQL)",
         language: "sql",
         icon: (
