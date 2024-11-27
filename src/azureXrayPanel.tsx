@@ -4,11 +4,7 @@ import icon from "/assets/icon.png"
 import kustoIcon from "/assets/kusto.svg"
 import pwshIcon from "/assets/pwsh_logo.svg"
 import { clsx } from "clsx"
-import {
-  DataTable,
-  DataTableColumn,
-  useDataTableColumns,
-} from "mantine-datatable"
+import { DataTable, DataTableColumn } from "mantine-datatable"
 import { useEffect, useMemo, useState } from "react"
 import { FaChevronRight } from "react-icons/fa6"
 import classes from "./datatable.module.css"
@@ -42,6 +38,7 @@ const AzureXrayPanel = () => {
     ) => {
       const url = traceEntry?.request?.url
       if (!url.startsWith("https://management.azure.com/batch")) {
+        // noop
         return
       }
       const postData = traceEntry?.request?.postData?.text
@@ -55,10 +52,6 @@ const AzureXrayPanel = () => {
       const reqData: AzureApiBatchRequest = JSON.parse(postData)
       const requests = reqData.requests
       requests.forEach(requestItem => {
-        requestItem.url = requestItem.url.replace(
-          /^https:\/\/management\.azure\.com/,
-          "",
-        )
         requestItem.requestHeaderDetails.commandName =
           requestItem.requestHeaderDetails.commandName.replace(/\.$/, "")
         console.log(
@@ -113,6 +106,7 @@ const AzureXrayPanel = () => {
       width: "20ch",
       textAlign: "right",
       noWrap: true,
+      toggleable: false,
     },
     {
       accessor: "httpMethod",
@@ -127,15 +121,19 @@ const AzureXrayPanel = () => {
     {
       accessor: "resourceId.name",
       title: "Resource Name",
-      render: apiRequest => apiRequest.resourceId.name,
-    },
-    {
-      accessor: "resourceId.resourceGroupName",
-      title: "Resource Group",
+      render: apiRequest => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if ("query" in (apiRequest as any)) return <i>Resource Graph Query</i>
+        return apiRequest.resourceId.name
+      },
     },
     {
       accessor: "resourceId.resourceType",
       title: "Type",
+    },
+    {
+      accessor: "resourceId.resourceGroup",
+      title: "Resource Group",
     },
     {
       accessor: "resourceId.subscriptionId",
@@ -147,26 +145,34 @@ const AzureXrayPanel = () => {
     },
   ]
 
-  const { effectiveColumns, resetColumnsToggle } = useDataTableColumns({
-    key: "azure-xray",
-    columns,
-  })
+  // const { effectiveColumns } = useDataTableColumns({
+  //   key: "azurexray_columns",
+  //   columns,
+  // })
 
   const table = (
     <DataTable
+      records={records}
+      columns={columns}
       defaultColumnProps={{
         ellipsis: true,
         resizable: true,
-        draggable: true,
-        toggleable: true,
+        // draggable: true,
+        // toggleable: true,
       }}
-      columns={effectiveColumns}
-      records={records}
-      withRowBorders={false}
-      withColumnBorders
-      striped
+      borderColor="#5E5E5E"
+      height="90%"
       highlightOnHover
+      idAccessor={apiRequest => records.indexOf(apiRequest) + 1}
+      minHeight="40%"
+      pinFirstColumn={true}
+      rowBorderColor="#5E5E5E"
+      // storeColumnsKey="azurexray_resize"
+      striped
       verticalAlign="top"
+      width="100%"
+      withColumnBorders
+      withRowBorders={false}
       styles={{
         table: {
           tableLayout: "fixed",
@@ -175,14 +181,9 @@ const AzureXrayPanel = () => {
           backgroundColor: "#333333",
         },
       }}
-      height="90%"
-      width="100%"
-      borderColor="#5E5E5E"
-      rowBorderColor="#5E5E5E"
       scrollAreaProps={{
         type: "hover",
       }}
-      idAccessor={apiRequest => records.indexOf(apiRequest) + 1}
       rowExpansion={{
         allowMultiple: true,
         expanded: {
@@ -191,7 +192,7 @@ const AzureXrayPanel = () => {
         },
         content: ({ record: apiRequest }) => (
           <>
-            <div>{apiRequest.url}</div>
+            <div>{apiRequest.url.toString()}</div>
             <CodeHighlightTabs
               code={getCodeHighlightDetails(apiRequest)}
               withExpandButton
@@ -224,9 +225,15 @@ const AzureXrayPanel = () => {
         <Button size="xs" variant="subtle" onClick={() => setRecords([])}>
           Clear
         </Button>
-        <Button size="xs" variant="subtle" onClick={() => resetColumnsToggle()}>
+        {/* <Button size="xs" variant="subtle" onClick={() => resetColumnsToggle()}>
           Reset View
-        </Button>
+        </Button> */}
+        {/* <Button size="xs" variant="subtle" onClick={() => resetColumnsWidth()}>
+          Reset Column Width
+        </Button> */}
+        {/* <Button size="xs" variant="subtle" onClick={() => resetColumnsOrder()}>
+          Reset Column Order
+        </Button> */}
       </div>
       <div id="xrayRequestsTable">{table}</div>
     </MantineProvider>
@@ -255,7 +262,7 @@ function getCodeHighlightDetails(
 
   const isResourceGraphQuery =
     command.httpMethod === "POST" &&
-    command.url.startsWith("/providers/Microsoft.ResourceGraph")
+    command.url.pathname.startsWith("/providers/Microsoft.ResourceGraph")
 
   if (isResourceGraphQuery) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,42 +1,56 @@
 import {
-  AzureApiRequest,
+  AzureApiRawRequest,
   AzureCommand,
   AzureResourceGraphQuery,
   AzureResourceId,
 } from "./types"
 
 export function parseAzureResourceId(url: string): AzureResourceId {
-  if (!(url.startsWith("/subscriptions/") || url.startsWith("/providers"))) {
+  if (!(url.startsWith("/subscriptions") || url.startsWith("/providers"))) {
     console.log("Parse Resource URL:", url)
     throw new Error(
-      "Invalid Azure Resource ID (doesn't begin with /subscriptions/)",
+      "Invalid Azure Resource ID (doesn't begin with /subscriptions or /providers)",
     )
   }
-  const components: AzureResourceId = {}
-  // Match subscription ID
-  const subMatch = url.match(/\/subscriptions\/([^/?]+)/)
-  if (subMatch) components.subscriptionId = subMatch[1]
 
-  // Match resource group
-  const rgMatch = url.match(/\/resourceGroups\/([^/?]+)/)
-  if (rgMatch) components.resourceGroupName = rgMatch[1]
+  const parts = url
+    .split("?")[0]
+    .split("/")
+    .filter(part => part)
 
-  // Match provider
-  const providerMatch = url.match(/\/providers\/([^/?]+)/)
-  if (providerMatch) components.provider = providerMatch[1]
+  const resourceId: AzureResourceId = {}
 
-  // Match resource type and name
-  const resourceMatch = url.match(
-    /\/providers\/[^/]+\/([^/]+)\/([^/]+)(?:\/|$)/,
-  )
-  if (resourceMatch) {
-    components.resourceType = resourceMatch[1]
-    components.name = resourceMatch[2]
+  let index = 0
+  while (index < parts.length) {
+    switch (parts[index]) {
+      case "subscriptions":
+        resourceId.subscriptionId = parts[++index]
+        break
+      case "resourceGroups":
+        resourceId.resourceGroup = parts[++index]
+        break
+      case "providers":
+        resourceId.provider = parts[++index]
+        if (index + 1 < parts.length) {
+          resourceId.resourceType = parts[++index]
+          // If there's another part, it's the resource name
+          if (index + 1 < parts.length) {
+            resourceId.name = parts[++index]
+            // If there are more parts, treat them as parent/child resources
+            if (index + 1 < parts.length) {
+              resourceId.parent = parts.slice(index + 1).join("/")
+            }
+          }
+        }
+        break
+    }
+    index++
   }
-  return components
+
+  return resourceId
 }
 
-export function extractApiVersion(url: string): [string, URLSearchParams] {
+export function extractUrlComponents(url: string): [string, URL] {
   const urlObj = !url.startsWith("https://")
     ? new URL(url, "https://management.azure.com")
     : new URL(url)
@@ -47,19 +61,19 @@ export function extractApiVersion(url: string): [string, URLSearchParams] {
     throw new Error("No API version found in URL. This is required.")
   }
   params.delete("api-version")
-  return [apiVersion, params]
+  return [apiVersion, urlObj]
 }
 
 export function parseAzureApiRequest(
-  request: AzureApiRequest,
+  request: AzureApiRawRequest,
 ): AzureCommand | AzureResourceGraphQuery {
-  const [apiVersion, queryParams] = extractApiVersion(request.url)
+  const [apiVersion, url] = extractUrlComponents(request.url)
 
   const command: AzureCommand = {
     ...request,
-    resourceId: parseAzureResourceId(request.url.split("?")[0]),
-    queryParams,
+    resourceId: parseAzureResourceId(url.pathname),
     apiVersion,
+    url,
   }
 
   // Special handling for Resource Graph queries
@@ -100,6 +114,5 @@ export function formatKqlQuery(query: string): string {
     .split("\n")
     .map(line => line.trimEnd())
     .join("\n")
-
   return query
 }

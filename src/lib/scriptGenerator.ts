@@ -1,3 +1,4 @@
+import { formatKqlQuery } from "./requestParser.js"
 import type { AzureCommand, AzureResourceGraphQuery } from "./types.js"
 
 export function generatePowerShellScript(request: AzureCommand): string {
@@ -18,7 +19,7 @@ export function generateArqPortalUrl(query: string): string {
 }
 
 function GenerateAzGraphSearchScript(request: AzureResourceGraphQuery): string {
-  return `"#requires -Module Az.ResourceGraph\n\nSearch-AzGraph -Query @'\n${request.query}\n'@\n\n`
+  return `#requires -Module Az.ResourceGraph\n\nSearch-AzGraph -Query @'\n${formatKqlQuery(request.query)}\n'@\n\n`
 }
 
 function GenerateAzRestMethodScript(request: AzureCommand): string {
@@ -28,22 +29,21 @@ function GenerateAzRestMethodScript(request: AzureCommand): string {
   script += "$azrmParams = @{\n"
 
   // Query parameters are not currently supported with Invoke-AzRestMethod deconstructed style, we have to use the base URI. TODO: Split out into hashtables and use the URI builder
-  if (request.queryParams && request.queryParams.size > 0) {
+  if (request.url.searchParams && request.url.searchParams.size > 0) {
     script +=
       "#This request has query parameters and requires the Invoke-Restmethod URI method until https://github.com/Azure/azure-powershell/issues/26755 is fixed \n"
-    script += `$Uri = '${request.url}?${request.queryParams.toString()}'\n`
+    script += `${indent}Uri = "${request.url}&api-version=${request.apiVersion}"\n`
   } else {
     const resourceId = request.resourceId
 
     const splatParams = {
       SubscriptionId: resourceId.subscriptionId,
-      ResourceGroupName: resourceId.resourceGroupName,
+      ResourceGroupName: resourceId.resourceGroup,
       ResourceProviderName: resourceId.provider,
       ResourceType: resourceId.resourceType,
       Name: resourceId.name,
       ApiVersion: request.apiVersion,
     }
-
     Object.entries(splatParams).forEach(([key, value]) => {
       if (value) {
         script += `${indent}${key} = '${value}'\n`
@@ -60,7 +60,8 @@ function GenerateAzRestMethodScript(request: AzureCommand): string {
     script += `${indent}Method = '${request.httpMethod}'\n`
 
   script += "}\n\n"
-  script += "Invoke-AzRestMethod @azrmParams"
+  script +=
+    "Invoke-AzRestMethod @azrmParams | Foreach-Object Content | ConvertFrom-Json -Depth 100"
 
   return script
 }

@@ -1,4 +1,4 @@
-export interface AzureApiRequest {
+export interface AzureApiRawRequest {
   httpMethod: string
   name: string
   requestHeaderDetails: AzureApiRequestHeaderDetails
@@ -6,10 +6,11 @@ export interface AzureApiRequest {
   content?: unknown
 }
 
-export interface AzureCommand extends AzureApiRequest {
+export interface AzureCommand extends Omit<AzureApiRawRequest, "url"> {
   resourceId: AzureResourceId
   apiVersion: string
-  queryParams?: URLSearchParams
+  // API version will be stripped from the URL
+  url: URL
 }
 
 export interface AzureResourceGraphQuery extends AzureCommand {
@@ -21,14 +22,14 @@ export interface AzureApiRequestHeaderDetails {
 }
 
 export interface AzureApiBatchRequest {
-  requests: AzureApiRequest[]
+  requests: AzureApiRawRequest[]
 }
 
 export interface AzureResourceId {
   subscriptionId?: string
-  resourceGroupName?: string
+  resourceGroup?: string
   provider?: string
   resourceType?: string
   name?: string
+  parent?: string
 }
-
