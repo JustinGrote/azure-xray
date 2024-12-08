@@ -1,8 +1,8 @@
-import react from '@vitejs/plugin-react-swc'
-import { crx } from '@crxjs/vite-plugin'
-import manifest from './manifest.json'
-import { defineConfig } from 'vite'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import { crx } from "@crxjs/vite-plugin"
+import react from "@vitejs/plugin-react-swc"
+import { defineConfig } from "vite"
+import tsconfigPaths from "vite-tsconfig-paths"
+import manifest from "./manifest.json"
 
 export default defineConfig({
   plugins: [react(), crx({ manifest }), tsconfigPaths()],
@@ -32,7 +32,10 @@ export default defineConfig({
               return "highlight"
             case id.includes("node_modules"):
               return "vendor"
+            case id.includes("azureIconMap"):
+              return "azureIconMap"
             default:
+              console.log("Chunking", id)
               return null
           }
         },
@@ -40,4 +43,3 @@ export default defineConfig({
     },
   },
 })
-

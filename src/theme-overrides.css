@@ -18,6 +18,9 @@
 .mantine-datatable td {
   padding-top: 1px;
   padding-bottom: 1px;
+	padding-left: 4px;
+	padding-right: 4px;
+
 }
 
 /* Drag Column Button, it's unnecessary */

@@ -1,13 +1,14 @@
 import { CodeHighlightTabs, CodeHighlightTabsCode } from "@mantine/code-highlight";
-import { Button, MantineProvider } from "@mantine/core"
-import icon from "/assets/icon.png"
-import kustoIcon from "/assets/kusto.svg"
-import pwshIcon from "/assets/pwsh_logo.svg"
-import { clsx } from "clsx"
-import { DataTable, DataTableColumn } from "mantine-datatable"
-import { useEffect, useMemo, useState } from "react"
-import { FaChevronRight } from "react-icons/fa6"
+import { Button, MantineProvider } from "@mantine/core";
+import icon from "/assets/icon.png";
+import kustoIcon from "/assets/kusto.svg";
+import pwshIcon from "/assets/pwsh_logo.svg";
+import { clsx } from "clsx";
+import { DataTable, DataTableColumn } from "mantine-datatable";
+import { useEffect, useMemo, useState } from "react";
+import { FaChevronRight } from "react-icons/fa6";
 import classes from "./datatable.module.css"
+import { azureIconMap, getAzureIcon } from "./lib/azureIconMap"
 import { formatKqlQuery, parseAzureApiRequest } from "./lib/requestParser"
 import {
   generateArqPortalUrl,
@@ -85,12 +86,19 @@ const AzureXrayPanel = () => {
       title: "Id",
       render: apiRequest => {
         const id = records.indexOf(apiRequest) + 1
+
+        const provider = apiRequest.resourceId.provider
+        const resourceType = apiRequest.resourceId.resourceType
+        if (!provider || !resourceType) return null
+
+        const resourceIcon = getAzureIcon(provider, resourceType)
+
         return (
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: "right",
               width: "100%",
             }}
           >
@@ -99,11 +107,14 @@ const AzureXrayPanel = () => {
                 [classes.expandIconRotated]: expandedRecordIds.includes(id),
               })}
             />
+            {resourceIcon ? resourceIcon : <span style={{ height: "16px" }} />}
+
             <span>{id}</span>
           </div>
         )
       },
-      width: "20ch",
+      width: "9ch",
+      resizable: false,
       textAlign: "right",
       noWrap: true,
       toggleable: false,
@@ -170,7 +181,7 @@ const AzureXrayPanel = () => {
       // storeColumnsKey="azurexray_resize"
       striped
       verticalAlign="top"
-      width="100%"
+      // width="100%"
       withColumnBorders
       withRowBorders={false}
       styles={{
