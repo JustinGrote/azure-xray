@@ -2,7 +2,7 @@
 
 Azure X-Ray is a Browser Devtools Panel extension that enables you to see Azure Management REST API calls made by the Azure Portal.
 
-![alt text](assets/README/example.png)
+https://github.com/user-attachments/assets/b05c7dcc-6bee-4cba-8fe7-ffb2e9f83c5d
 
 Inspired by [Graph X-Ray](https://graphxray.merill.net/)
 

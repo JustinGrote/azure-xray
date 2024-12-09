@@ -24,15 +24,24 @@ function GenerateAzGraphSearchScript(request: AzureResourceGraphQuery): string {
 
 function GenerateAzRestMethodScript(request: AzureCommand): string {
   const indent = "  " // 2 spaces
-
   let script = "#requires -module Az.Accounts\n\n"
+
+  if (request.url.searchParams && request.url.searchParams.size > 0) {
+    script +=
+      "#This request has query parameters and requires the Invoke-Restmethod URI method until https://github.com/Azure/azure-powershell/issues/26755 is fixed \n"
+    script += '$query = [Web.HttpUtility]::ParseQueryString("")\n'
+    request.url.searchParams.forEach((value, key) => {
+      script += `$query['${key}'] = "${value}"\n`
+    })
+    script += `$query['api-version'] = "${request.apiVersion}"\n\n`
+  }
+
   script += "$azrmParams = @{\n"
 
   // Query parameters are not currently supported with Invoke-AzRestMethod deconstructed style, we have to use the base URI. TODO: Split out into hashtables and use the URI builder
   if (request.url.searchParams && request.url.searchParams.size > 0) {
-    script +=
-      "#This request has query parameters and requires the Invoke-Restmethod URI method until https://github.com/Azure/azure-powershell/issues/26755 is fixed \n"
-    script += `${indent}Uri = "${request.url}&api-version=${request.apiVersion}"\n`
+    const baseUrl = request.url.origin + request.url.pathname
+    script += `${indent}Uri = "${baseUrl}?$($query.ToString())"\n`
   } else {
     const resourceId = request.resourceId
 
