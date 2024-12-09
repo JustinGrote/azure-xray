@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 vite.config.mts.timestamp*
+dist.crx
+dist.pem
