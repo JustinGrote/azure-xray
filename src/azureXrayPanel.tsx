@@ -7,14 +7,12 @@ import { clsx } from "clsx";
 import { DataTable, DataTableColumn } from "mantine-datatable";
 import { useEffect, useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
-import classes from "./datatable.module.css"
-import { getAzureIcon } from "./lib/azureIconMap"
-import { formatKqlQuery, parseAzureApiRequest } from "./lib/requestParser"
-import {
-  generateArqPortalUrl,
-  generatePowerShellScript,
-} from "./lib/scriptGenerator"
-import { AzureApiBatchRequest, AzureCommand } from "./lib/types"
+import classes from "./datatable.module.css";
+import { getAzureIcon } from "./lib/azureIconMap";
+import { formatKqlQuery, parseAzureApiRequest } from "./lib/requestParser";
+import { generateArqPortalUrl, generatePowerShellScript } from "./lib/scriptGenerator";
+import { AzureApiBatchRequest, AzureCommand } from "./lib/types";
+
 
 const AzureXrayPanel = () => {
   // Latest edge only supports default and dark. As of Nov 2024 we can't detect theme changes so this is memoized.
@@ -87,8 +85,8 @@ const AzureXrayPanel = () => {
       render: apiRequest => {
         const id = records.indexOf(apiRequest) + 1
 
-        const provider = apiRequest.resourceId.provider
-        const resourceType = apiRequest.resourceId.resourceType
+        const provider = apiRequest.resourceId.provider!
+        const resourceType = apiRequest.resourceId.resourceType!
         let resourceIcon = undefined
         if (!provider && !resourceType) {
           if (!apiRequest.resourceId.resourceGroup) {
