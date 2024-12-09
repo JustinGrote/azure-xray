@@ -31,5 +31,5 @@ export interface AzureResourceId {
   provider?: string
   resourceType?: string
   name?: string
-  parent?: string
+  parent?: AzureResourceId
 }

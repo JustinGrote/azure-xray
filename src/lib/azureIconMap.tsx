@@ -1,4 +1,8 @@
 import { Image } from "@mantine/core"
+import iconAzureDeployments from "../../assets/azure-deployments.svg"
+import iconDefault from "../../assets/azure-resource.svg"
+import iconAzureResourceProvider from "../../assets/azure-resourceprovider.svg"
+import iconAzureTag from "../../assets/azure-tag.svg"
 import iconData from "../../assets/azureIconMap.json"
 
 type AzureResourceTypeIconMap = Readonly<Record<string, string>>
@@ -12,24 +16,14 @@ export function getAzureIcon(
   resourceType: string,
 ): JSX.Element | undefined {
   const iconKey = getAzureIconKey(provider, resourceType)
-  const iconContent = azureIconMap[iconKey]
-  if (!iconContent) {
-    return undefined
-  }
-
-  return (
-    <Image
-      src={`data:image/svg+xml;base64,${btoa(iconContent)}`}
-      alt={iconKey}
-      h={16}
-    />
-  )
+  const iconContent = getAzureIconContent(iconKey)
+  return <Image src={iconContent} alt={iconKey} h={16} />
 }
 
-export function getAzureIconKey(
-  provider: string,
-  resourceType: string,
-): string {
+function getAzureIconKey(provider: string, resourceType: string): string {
+  if (provider && !resourceType) {
+    return provider
+  }
   let azureIconKey = `${provider}/${resourceType}`.toLowerCase()
   switch (azureIconKey) {
     case "microsoft.resourcegraph/resources":
@@ -38,4 +32,23 @@ export function getAzureIconKey(
   }
 
   return azureIconKey
+}
+
+function getAzureIconContent(iconKey: string) {
+  // If the icon key is a simple provider name, return the default provider icon
+  if (!iconKey.includes("/")) {
+    return iconAzureResourceProvider
+  }
+  if (iconKey === "microsoft.resources/tags") {
+    return iconAzureTag
+  }
+  if (iconKey === "microsoft.resources/deployments") {
+    return iconAzureDeployments
+  }
+
+  const embeddedIcon = azureIconMap[iconKey]
+
+  return embeddedIcon
+    ? `data:image/svg+xml;base64,${btoa(embeddedIcon)}`
+    : iconDefault
 }

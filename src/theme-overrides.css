@@ -31,3 +31,14 @@ div:has(> button.mantine-datatable-header-cell-draggable-action-icon) {
 body {
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+
+.mantine-CodeHighlightTabs-header {
+	width: 100vw;
+}
+
+.mantine-CodeHighlightTabs-controls {
+	flex-grow: 0;
+	flex-shrink: 0;
+	flex-basis: content;
+	flex-wrap: nowrap;
+}

@@ -8,7 +8,7 @@ import { DataTable, DataTableColumn } from "mantine-datatable";
 import { useEffect, useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
 import classes from "./datatable.module.css"
-import { azureIconMap, getAzureIcon } from "./lib/azureIconMap"
+import { getAzureIcon } from "./lib/azureIconMap"
 import { formatKqlQuery, parseAzureApiRequest } from "./lib/requestParser"
 import {
   generateArqPortalUrl,
@@ -89,9 +89,24 @@ const AzureXrayPanel = () => {
 
         const provider = apiRequest.resourceId.provider
         const resourceType = apiRequest.resourceId.resourceType
-        if (!provider || !resourceType) return null
-
-        const resourceIcon = getAzureIcon(provider, resourceType)
+        let resourceIcon = undefined
+        if (!provider && !resourceType) {
+          if (!apiRequest.resourceId.resourceGroup) {
+            if (apiRequest.resourceId.subscriptionId) {
+              resourceIcon = getAzureIcon(
+                "Microsoft.Resources",
+                "subscriptions",
+              )
+            }
+          } else {
+            resourceIcon = getAzureIcon(
+              "Microsoft.Resources",
+              "subscriptions/resourceGroups",
+            )
+          }
+        } else {
+          resourceIcon = getAzureIcon(provider, resourceType)
+        }
 
         return (
           <div
@@ -109,11 +124,11 @@ const AzureXrayPanel = () => {
             />
             {resourceIcon ? resourceIcon : <span style={{ height: "16px" }} />}
 
-            <span>{id}</span>
+            <span style={{ width: "3ch" }}>{id}</span>
           </div>
         )
       },
-      width: "9ch",
+      width: "10ch",
       resizable: false,
       textAlign: "right",
       noWrap: true,
@@ -128,19 +143,31 @@ const AzureXrayPanel = () => {
     {
       accessor: "requestHeaderDetails.commandName",
       title: "Name",
+      resizable: true,
+      ellipsis: true,
     },
     {
       accessor: "resourceId.name",
       title: "Resource Name",
       render: apiRequest => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if ("query" in (apiRequest as any)) return <i>Resource Graph Query</i>
-        return apiRequest.resourceId.name
+        const { provider, resourceType } = apiRequest.resourceId
+        if (apiRequest.resourceId.name) {
+          return apiRequest.resourceId.name
+        }
+
+        if (
+          provider === "Microsoft.ResourceGraph" &&
+          resourceType === "resources"
+        ) {
+          return <i>Resource Graph Query</i>
+        }
+        if (provider && !resourceType) {
+          return <i>List {provider}</i>
+        }
+        if (provider && resourceType) {
+          return <i>List {resourceType}</i>
+        }
       },
-    },
-    {
-      accessor: "resourceId.resourceType",
-      title: "Type",
     },
     {
       accessor: "resourceId.resourceGroup",
@@ -153,6 +180,10 @@ const AzureXrayPanel = () => {
     {
       accessor: "resourceId.provider",
       title: "Resource Provider",
+    },
+    {
+      accessor: "resourceId.resourceType",
+      title: "Type",
     },
   ]
 
@@ -172,21 +203,18 @@ const AzureXrayPanel = () => {
         // toggleable: true,
       }}
       borderColor="#5E5E5E"
-      height="90%"
       highlightOnHover
       idAccessor={apiRequest => records.indexOf(apiRequest) + 1}
-      minHeight="40%"
       pinFirstColumn={true}
       rowBorderColor="#5E5E5E"
       // storeColumnsKey="azurexray_resize"
       striped
       verticalAlign="top"
-      // width="100%"
       withColumnBorders
       withRowBorders={false}
       styles={{
         table: {
-          tableLayout: "fixed",
+          tableLayout: "auto",
         },
         header: {
           backgroundColor: "#333333",
@@ -201,16 +229,19 @@ const AzureXrayPanel = () => {
           recordIds: expandedRecordIds,
           onRecordIdsChange: setExpandedRecordIds,
         },
-        content: ({ record: apiRequest }) => (
-          <>
-            <div>{apiRequest.url.toString()}</div>
-            <CodeHighlightTabs
-              code={getCodeHighlightDetails(apiRequest)}
-              withExpandButton
-              defaultExpanded={false}
-            />
-          </>
-        ),
+        content: ({ record: apiRequest }) => {
+          const code = getCodeHighlightDetails(apiRequest)
+          return (
+            <>
+              <div>{apiRequest.url.toString()}</div>
+              <CodeHighlightTabs
+                code={code}
+                withExpandButton
+                defaultExpanded={code[0].code.split("\n").length < 13}
+              />
+            </>
+          )
+        },
       }}
     />
   )
@@ -246,6 +277,7 @@ const AzureXrayPanel = () => {
           Reset Column Order
         </Button> */}
       </div>
+
       <div id="xrayRequestsTable">{table}</div>
     </MantineProvider>
   )

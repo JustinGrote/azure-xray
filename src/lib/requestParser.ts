@@ -6,6 +6,12 @@ import {
 } from "./types"
 
 export function parseAzureResourceId(url: string): AzureResourceId {
+  if (url.startsWith("/locations")) {
+    // This is a location URL, not a resource URL
+    return {
+      provider: "locations",
+    }
+  }
   if (!(url.startsWith("/subscriptions") || url.startsWith("/providers"))) {
     console.log("Parse Resource URL:", url)
     throw new Error(
@@ -14,7 +20,7 @@ export function parseAzureResourceId(url: string): AzureResourceId {
   }
 
   const parts = url
-    .split("?")[0]
+    .split("?")[0] // Remove query string
     .split("/")
     .filter(part => part)
 
@@ -22,27 +28,47 @@ export function parseAzureResourceId(url: string): AzureResourceId {
 
   let index = 0
   while (index < parts.length) {
-    switch (parts[index]) {
+    switch (parts[index].toLowerCase()) {
       case "subscriptions":
         resourceId.subscriptionId = parts[++index]
         break
-      case "resourceGroups":
+      case "resources":
+        resourceId.provider = "Microsoft.Resources"
+        resourceId.resourceType = "resources"
+        break
+      case "resourcegroups":
         resourceId.resourceGroup = parts[++index]
         break
-      case "providers":
-        resourceId.provider = parts[++index]
-        if (index + 1 < parts.length) {
-          resourceId.resourceType = parts[++index]
+      case "providers": {
+        index++ //Skip past /providers
+        let resourceParts = parts.slice(index)
+
+        const providerIndex = resourceParts.indexOf("providers")
+        if (providerIndex !== -1) {
+          const parentChildSplitIndex = index + providerIndex
+          //This is a child resource, parse the parent recursively then continue with child
+          const parentParts = "/" + parts.slice(0, parentChildSplitIndex).join("/")
+          resourceId.parent = parseAzureResourceId(parentParts)
+
+          resourceParts = parts.slice(parentChildSplitIndex + 1)
+        }
+
+        // Continue parsing the resource type and name
+        if (resourceParts[0]) {
+          resourceId.provider = resourceParts[0]
           // If there's another part, it's the resource name
-          if (index + 1 < parts.length) {
-            resourceId.name = parts[++index]
-            // If there are more parts, treat them as parent/child resources
-            if (index + 1 < parts.length) {
-              resourceId.parent = parts.slice(index + 1).join("/")
-            }
+          if (resourceParts[1]) {
+            resourceId.resourceType = resourceParts[1]
+          }
+          // If there's another part, it's the resource name
+          if (resourceParts[2]) {
+            resourceId.name = resourceParts[2]
           }
         }
+        // We've reached the end of parsing, short-circuit any further parsing
+        index = parts.length
         break
+      }
     }
     index++
   }
