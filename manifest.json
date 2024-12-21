@@ -3,7 +3,7 @@
   "manifest_version": 3,
   "name": "Azure X-Ray",
   "description": "Azure X-Ray lets you view Azure Management API requests made by a web portal and capture them in a programattic fashion.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "action": { "default_popup": "popup.html" },
   "devtools_page": "devtools.html",
   "permissions": ["clipboardWrite", "storage"],
