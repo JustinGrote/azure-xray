@@ -1,26 +1,25 @@
 :root {
   --mantine-font-size-sm: 12px;
-	background-color: #282828;
-	color: #ffffff;
+	/* background-color: #282828; */
+	/* color: #ffffff; */
 }
 
 .mantine-datatable-row {
-	--mantine-datatable-striped-color: #28292a;
-	--mantine-datatable-color: #1f1f1f;
-	--mantine-datatable-row-color: #E3E3E3;
+	/* --mantine-datatable-striped-color: #28292a; */
+	/* --mantine-datatable-color: #1f1f1f; */
+	/* --mantine-datatable-row-color: #E3E3E3; */
 }
 .mantine-datatable th {
 	padding-top: 7px;
 	padding-bottom: 7px;
 	font-weight: 400;
-	background-color: #333333;
+	/* background-color: #333333; */
 }
 .mantine-datatable td {
   padding-top: 1px;
   padding-bottom: 1px;
 	padding-left: 4px;
 	padding-right: 4px;
-
 }
 
 /* Drag Column Button, it's unnecessary */
@@ -42,3 +41,4 @@ body {
 	flex-basis: content;
 	flex-wrap: nowrap;
 }
+

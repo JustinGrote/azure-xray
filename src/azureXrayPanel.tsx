@@ -1,18 +1,49 @@
 import { CodeHighlightTabs, CodeHighlightTabsCode } from "@mantine/code-highlight";
-import { Button, MantineProvider } from "@mantine/core";
-import icon from "/assets/icon.png";
-import kustoIcon from "/assets/kusto.svg";
-import pwshIcon from "/assets/pwsh_logo.svg";
-import { clsx } from "clsx";
-import { DataTable, DataTableColumn } from "mantine-datatable";
-import { useEffect, useMemo, useState } from "react";
-import { FaChevronRight } from "react-icons/fa6";
-import classes from "./datatable.module.css";
-import { getAzureIcon } from "./lib/azureIconMap";
-import { formatKqlQuery, parseAzureApiRequest } from "./lib/requestParser";
-import { generateArqPortalUrl, generatePowerShellScript } from "./lib/scriptGenerator";
-import { AzureApiBatchRequest, AzureCommand } from "./lib/types";
+import { Button, createTheme, MantineProvider } from "@mantine/core"
+import icon from "/assets/icon.png"
+import kustoIcon from "/assets/kusto.svg"
+import pwshIcon from "/assets/pwsh_logo.svg"
+import { clsx } from "clsx"
+import { DataTable, DataTableColumn } from "mantine-datatable"
+import { useEffect, useMemo, useState } from "react"
+import { FaChevronRight } from "react-icons/fa6"
+import classes from "./datatable.module.css"
+import { getAzureIcon } from "./lib/azureIconMap"
+import { formatKqlQuery, parseAzureApiRequest } from "./lib/requestParser"
+import {
+  generateArqPortalUrl,
+  generatePowerShellScript,
+} from "./lib/scriptGenerator"
+import { AzureApiBatchRequest, AzureCommand } from "./lib/types"
 
+const theme = createTheme({
+  colors: {
+    // gray: [
+    //   "#f8f9fa",
+    //   "#e9ecef",
+    //   "#dee2e6",
+    //   "#ced4da",
+    //   "#adb5bd",
+    //   "#868e96",
+    //   "#495057",
+    //   "#343a40",
+    //   "#212529",
+    //   "#12181b",
+    // ],
+    // dark: [
+    //   "#d5d7e0",
+    //   "#acaebf",
+    //   "#8c8fa3",
+    //   "#666980",
+    //   "#4d4f66",
+    //   "#34354a",
+    //   "#28292a", //Devtools striped row
+    //   "#1d1e30",
+    //   "#0c0d21",
+    //   "#01010a",
+    // ],
+  },
+})
 
 const AzureXrayPanel = () => {
   // Latest edge only supports default and dark. As of Nov 2024 we can't detect theme changes so this is memoized.
@@ -204,7 +235,7 @@ const AzureXrayPanel = () => {
       highlightOnHover
       idAccessor={apiRequest => records.indexOf(apiRequest) + 1}
       pinFirstColumn={true}
-      rowBorderColor="#5E5E5E"
+      // rowBorderColor="#5E5E5E"
       // storeColumnsKey="azurexray_resize"
       striped
       verticalAlign="top"
@@ -215,7 +246,7 @@ const AzureXrayPanel = () => {
           tableLayout: "auto",
         },
         header: {
-          backgroundColor: "#333333",
+          // backgroundColor: "#333333",
         },
       }}
       scrollAreaProps={{
@@ -245,7 +276,10 @@ const AzureXrayPanel = () => {
   )
 
   return (
-    <MantineProvider defaultColorScheme={mantineThemeColorSchemeName}>
+    <MantineProvider
+      theme={theme}
+      defaultColorScheme={mantineThemeColorSchemeName}
+    >
       <div
         id="header"
         style={{
