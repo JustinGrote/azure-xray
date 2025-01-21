@@ -8,7 +8,9 @@ Inspired by [Graph X-Ray](https://graphxray.merill.net/)
 
 ## Quick Start
 
-Availability in the various extension stores is pending.
+[Microsoft Edge Add-On Store](https://microsoftedge.microsoft.com/addons/detail/azure-xray/khbbpcejnfijlaobdgahfeodlplpnaic)
+
+Other stores (Chrome, Firefox, etc.) are pending.
 
 To use the development version:
 
